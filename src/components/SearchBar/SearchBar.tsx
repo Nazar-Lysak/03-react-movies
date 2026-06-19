@@ -1,10 +1,20 @@
+import toast, { Toaster } from 'react-hot-toast';
 import styles from './SearchBar.module.css'
 
 interface SearchBarProps {
-  handleClick: (formData: FormData) => void
+  onSubmit: (query: string) => void
 }
 
-function SearchBar({handleClick}: SearchBarProps) {
+function SearchBar({onSubmit}: SearchBarProps) {
+
+  const handleSubmit = (formData: FormData) => {
+    const query = formData.get("query");
+    if (typeof query !== "string" || query.trim().length === 0) {
+      toast.error("Please insert your search query.")
+      return;
+    }
+    onSubmit(query);
+  }
   return (
     <header className={styles.header}>
       {" "}
@@ -19,7 +29,7 @@ function SearchBar({handleClick}: SearchBarProps) {
           Powered by TMDB{" "}
         </a>
         {" "}
-        <form className={styles.form} action={handleClick}>
+        <form className={styles.form} action={handleSubmit}>
           {" "}
           <input
             className={styles.input}
@@ -37,6 +47,10 @@ function SearchBar({handleClick}: SearchBarProps) {
         </form>
         {" "}
       </div>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
     </header>
   );
 }

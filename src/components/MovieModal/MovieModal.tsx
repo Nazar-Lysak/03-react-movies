@@ -3,17 +3,16 @@ import css from "./MovieModal.module.css";
 import type { Movie } from "../../types/movie";
 import { useEffect } from "react";
 
-interface movieModalProp {
+interface MovieModalProps {
   movie: Movie;
-  closePopup: () => void;
+  onClose: () => void;
 }
-function MovieModal({ movie, closePopup }: movieModalProp) {
+function MovieModal({ movie, onClose }: MovieModalProps) {
   useEffect(() => {
-    if (!open) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        closePopup();
+        onClose();
       }
     };
 
@@ -22,13 +21,11 @@ function MovieModal({ movie, closePopup }: movieModalProp) {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [closePopup]);
-
-  if (!open) return null;
+  }, [onClose]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      closePopup();
+      onClose();
     }
   };
 
@@ -43,12 +40,12 @@ function MovieModal({ movie, closePopup }: movieModalProp) {
         <button
           className={css.closeButton}
           aria-label="Close modal"
-          onClick={closePopup}
+          onClick={onClose}
         >
           &times;
         </button>
         <img
-          src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+          src={`https://image.tmdb.org/t/p/w500/${movie.backdrop_path}`}
           alt={movie.title}
           className={css.image}
         />

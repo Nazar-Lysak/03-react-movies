@@ -2,35 +2,31 @@ import { useState } from "react";
 import SearchBar from "../SearchBar/SearchBar";
 import css from "./App.module.css";
 import type { Movie } from "../../types/movie";
-import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieGrid from "../MovieGrid/MovieGrid";
 import { fetchMovies } from "../../services/movieService";
 import MovieModal from "../MovieModal/MovieModal";
 import toast, { Toaster } from "react-hot-toast";
+import Loader from "../Loader/Loader";
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
-  const [showMovie, setShowMovie] = useState<number | null>(null);
+  const [showMovie, setShowMovie] = useState<Movie | null>(null);
 
-  const openPopup = (id:number) => {
-    setShowMovie(id)
+  const openPopup = (movie:Movie) => {
+    setShowMovie(movie);
+    document.body.style.overflow = 'hidden';
   }
 
   const closePopup = () => {
     setShowMovie(null);
+    document.body.style.overflow = 'auto';
   }
 
-  const popupMovie = movies.filter(movie => movie.id === showMovie);
 
-  const handleSearch = async (formData: FormData) => {
-    const query = formData.get("query") as string;
-    if (query.length === 0) {
-      toast.error("Please insert your search query.")
-      return;
-    }
+  const onSubmit = async (query: string) => {
 
     try {
       setIsError(false);
@@ -48,11 +44,11 @@ function App() {
 
   return (
     <div className={css.app}>
-      <SearchBar handleClick={handleSearch} />
-      {movies.length > 0 && <MovieGrid movies={movies} handleMovie={openPopup} />}
+      <SearchBar onSubmit={onSubmit} />
+      {movies.length > 0 && <MovieGrid movies={movies} onSelect={openPopup} />}
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
-      {showMovie && <MovieModal movie={popupMovie[0]} closePopup={closePopup} />}
+      {showMovie && <MovieModal movie={showMovie} onClose={closePopup} />}
       <Toaster
         position="top-center"
         reverseOrder={false}

@@ -17,14 +17,11 @@ function App() {
 
   const openPopup = (movie:Movie) => {
     setShowMovie(movie);
-    document.body.style.overflow = 'hidden';
   }
 
   const closePopup = () => {
     setShowMovie(null);
-    document.body.style.overflow = 'auto';
   }
-
 
   const onSubmit = async (query: string) => {
 
